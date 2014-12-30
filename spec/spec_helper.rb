@@ -13,7 +13,7 @@ end
 # Configure Rails Environment
 ENV['RAILS_ENV'] = 'test'
 
-#require File.expand_path('../dummy/config/environment.rb',  __FILE__)
+require File.expand_path('../dummy/config/environment.rb',  __FILE__)
 
 require 'rspec/rails'
 require 'database_cleaner'
@@ -23,6 +23,10 @@ require 'ffaker'
 # in spec/support/ and its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
+require 'factory_girl'
+Dir["#{File.dirname(__FILE__)}/factories/**"].each do |f|
+    require File.expand_path(f)
+end
 # Requires factories and other useful helpers defined in spree_core.
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/capybara_ext'
@@ -33,6 +37,7 @@ require 'spree/testing_support/url_helpers'
 # Requires factories defined in lib/spree_weixin_merchant/factories.rb
 require 'spree_weixin_merchant/factories'
 
+#load '#{::Rails.root}/spec/data/seed/'
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
@@ -67,8 +72,9 @@ RSpec.configure do |config|
 
   # Ensure Suite is set to use transactions for speed.
   config.before :suite do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with :truncation
+    DatabaseCleaner.strategy = :transaction 
+    DatabaseCleaner.clean_with :truncation, { except: %w(spree_countries spree_states) }
+    SpreeWeixinMerchant::Engine.load_seed
   end
 
   # Before each spec check if it is a Javascript test and switch between using database transactions or not where necessary.
@@ -84,4 +90,6 @@ RSpec.configure do |config|
 
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.order = "random"
+  
 end
+#load File.expand_path('../dummy/db/seeds.rb',  __FILE__)

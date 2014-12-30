@@ -17,8 +17,10 @@ Gem::Specification.new do |s|
   s.requirements << 'none'
 
   s.add_dependency 'spree_core', '~> 2.3.2'
+  s.add_dependency 'spree_social'
   s.add_dependency 'money', '< 7.0.0'
   s.add_dependency 'weixin_merchant'
+  s.add_dependency 'weixin_authorize'
 
   s.add_development_dependency 'capybara', '~> 2.1'
   s.add_development_dependency 'coffee-rails'
