@@ -15,6 +15,7 @@ module Spree::WeixinMerchant
       spree_user = spree_user_auth ? spree_user_auth.user : create_spree_user(user_info)
       
       puts "user is #{spree_user.inspect}"
+      binding.pry
       #order_info = ::WeixinMerchant::Service.get_order(orderid)
       order_info = service.get_order(orderid)
       
@@ -49,7 +50,7 @@ module Spree::WeixinMerchant
     def build_order_params(woi)
       params = {}
       params['currency'] = 'CNY'
-      params['ship_address_attributes'] = {
+      params[:ship_address_attributes] = {
         lastname: woi.receiver_name,
         firstname: woi.buyer_nick,
         address1: woi.receiver_address,
@@ -59,8 +60,8 @@ module Spree::WeixinMerchant
       country_id: Spree::Country.find_by(iso: 'CN').id,
       zipcode: 123456
       }
-      params['bill_address_attributes'] = params['ship_address_attributes'] 
-      params['line_items_attributes'] = { 
+      params[:bill_address_attributes] = params[:ship_address_attributes] 
+      params[:line_items_attributes] = { 
         line_item: { 
           variant_id: (get_spree_variant(woi.product_sku.present? ? woi.product_sku : woi.product_id)).id,
           quantity: woi.product_count,
